@@ -26,6 +26,8 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
   const [tree, setTree] = useState<FSNode[]>([]);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
+  const [draggedItemIsFolder, setDraggedItemIsFolder] = useState<boolean>(false);
+  const [folderDragHover, setFolderDragHover] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
 
   const refreshTree = () => {
@@ -55,8 +57,9 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
     }
   };
 
-  const handleDragStart = (e: React.DragEvent, path: string) => {
-    setDraggedItem(path);
+  const handleDragStart = (e: React.DragEvent, node: FSNode) => {
+    setDraggedItem(node.path);
+    setDraggedItemIsFolder(node.type === "folder");
     e.dataTransfer.effectAllowed = "move";
   };
 
@@ -65,10 +68,46 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
     e.dataTransfer.dropEffect = "move";
   };
 
-  const handleDrop = (e: React.DragEvent, targetPath: string) => {
+  const isDescendant = (parent: string, possibleChild: string) => {
+    if (!parent) return false;
+    if (parent === possibleChild) return true;
+    return possibleChild.startsWith(parent + "\\");
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetNode: FSNode) => {
     e.preventDefault();
-    if (draggedItem && draggedItem !== targetPath) {
-      console.log(`Moving ${draggedItem} to ${targetPath}`);
+    setFolderDragHover(null);
+    if (!draggedItem) {
+      setDraggedItem(null);
+      return;
+    }
+    if (targetNode.type !== "folder") {
+      setDraggedItem(null);
+      return;
+    }
+    if (draggedItem === targetNode.path) {
+      setDraggedItem(null);
+      return;
+    }
+    if (draggedItemIsFolder && isDescendant(draggedItem, targetNode.path)) {
+      console.warn("Cannot move a folder into itself or its descendant");
+      setDraggedItem(null);
+      return;
+    }
+    try {
+      const res = await fetch("/api/move", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ source: draggedItem, target: targetNode.path }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        console.error("Move failed:", data.error);
+      } else {
+        refreshTree();
+      }
+    } catch (err) {
+      console.error("Move error", err);
     }
     setDraggedItem(null);
   };
@@ -161,9 +200,19 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
           } ${isDragging ? "opacity-50" : ""}`}
           style={{ paddingLeft: level * 16 + 8 }}
           draggable
-          onDragStart={(e) => handleDragStart(e, node.path)}
+          onDragStart={(e) => handleDragStart(e, node)}
           onDragOver={handleDragOver}
-          onDrop={(e) => handleDrop(e, node.path)}
+          onDrop={(e) => handleDrop(e, node)}
+          onDragEnter={(e) => {
+            if (draggedItem && node.type === "folder") {
+              setFolderDragHover(node.path);
+            }
+          }}
+          onDragLeave={(e) => {
+            if (folderDragHover === node.path && !e.currentTarget.contains(e.relatedTarget as Node)) {
+              setFolderDragHover(null);
+            }
+          }}
           onClick={() => {
             if (node.type === "folder") {
               toggleFolder(node);
@@ -175,13 +224,9 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
           {node.type === "folder" && (
             <>
               <span className="mr-1 text-gray-500">
-                {isOpen ? (
-                  <FaChevronDown size={10} />
-                ) : (
-                  <FaChevronRight size={10} />
-                )}
+                {isOpen ? <FaChevronDown size={10} /> : <FaChevronRight size={10} />}
               </span>
-              <span className="mr-2 text-gray-600">
+              <span className={`mr-2 ${folderDragHover === node.path ? "text-blue-600" : "text-gray-600"}`}>
                 {isOpen ? <FaFolderOpen size={14} /> : <FaFolder size={14} />}
               </span>
             </>
