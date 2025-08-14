@@ -1,18 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { 
-  VscFile, 
-  VscJson, 
+import {
+  VscFile,
+  VscJson,
   VscMarkdown,
   VscFileMedia,
   VscCode,
-  VscFileSubmodule
+  VscFileSubmodule,
 } from "react-icons/vsc";
-import { 
-  DiJavascript1, 
-  DiCss3,
-  DiReact 
-} from "react-icons/di";
+import { DiJavascript1, DiCss3, DiReact } from "react-icons/di";
 import { FaHtml5 } from "react-icons/fa";
 
 interface FileViewerProps {
@@ -54,8 +50,8 @@ const FileViewer: React.FC<FileViewerProps> = ({ filePath }) => {
   if (!filePath) {
     return (
       <div className="flex-1 bg-white flex items-center justify-center">
-        <div className="text-center text-gray-500">
-          <VscFile size={48} className="mx-auto mb-4 opacity-50" />
+        <div className="text-center text-gray-600">
+          <VscFile size={48} className="mx-auto mb-4 opacity-75" />
           <p className="text-lg">Select a file to view its contents</p>
         </div>
       </div>
@@ -89,41 +85,41 @@ const FileViewer: React.FC<FileViewerProps> = ({ filePath }) => {
   };
 
   const getFileIcon = () => {
-    if (!filePath) return <VscFile className="text-gray-500" size={16} />;
-    
-    const ext = filePath.split('.').pop()?.toLowerCase();
-    
+    if (!filePath) return <VscFile className="text-gray-600" size={16} />;
+
+    const ext = filePath.split(".").pop()?.toLowerCase();
+
     switch (ext) {
-      case 'json':
-        return <VscJson className="text-yellow-600" size={16} />;
-      case 'md':
-        return <VscMarkdown className="text-blue-400" size={16} />;
-      case 'js':
-      case 'jsx':
-        return <DiJavascript1 className="text-yellow-400" size={16} />;
-      case 'ts':
-        return <VscCode className="text-blue-500" size={16} />;
-      case 'tsx':
-        return <DiReact className="text-blue-500" size={16} />;
-      case 'css':
-        return <DiCss3 className="text-blue-600" size={16} />;
-      case 'html':
-        return <FaHtml5 className="text-orange-500" size={16} />;
-      case 'png':
-      case 'jpg':
-      case 'jpeg':
-      case 'gif':
-      case 'svg':
-        return <VscFileMedia className="text-purple-500" size={16} />;
+      case "json":
+        return <VscJson className="text-gray-600" size={16} />;
+      case "md":
+        return <VscMarkdown className="text-gray-600" size={16} />;
+      case "js":
+      case "jsx":
+        return <DiJavascript1 className="text-gray-600" size={16} />;
+      case "ts":
+        return <VscCode className="text-gray-600" size={16} />;
+      case "tsx":
+        return <DiReact className="text-gray-600" size={16} />;
+      case "css":
+        return <DiCss3 className="text-gray-600" size={16} />;
+      case "html":
+        return <FaHtml5 className="text-gray-600" size={16} />;
+      case "png":
+      case "jpg":
+      case "jpeg":
+      case "gif":
+      case "svg":
+        return <VscFileMedia className="text-gray-600" size={16} />;
       default:
-        return <VscFile className="text-gray-500" size={16} />;
+        return <VscFile className="text-gray-600" size={16} />;
     }
   };
 
   return (
     <div className="flex-1 bg-white flex flex-col">
       <div className="px-4 py-2 bg-gray-50 border-b border-gray-200 flex items-center">
-        {getFileIcon()} 
+        {getFileIcon()}
         <span className="ml-2 text-sm text-gray-700 font-medium">
           {filePath.split("\\").pop()}
         </span>

@@ -8,20 +8,15 @@ import {
   FaChevronDown,
   FaHtml5,
 } from "react-icons/fa";
-import { 
-  VscFile, 
-  VscJson, 
+import {
+  VscFile,
+  VscJson,
   VscMarkdown,
   VscFileMedia,
   VscSettings,
-  VscCode
+  VscCode,
 } from "react-icons/vsc";
-import { 
-  DiJavascript1, 
-  DiCss3,
-  DiReact,
-  DiNpm
-} from "react-icons/di";
+import { DiJavascript1, DiCss3, DiReact, DiNpm } from "react-icons/di";
 
 interface FileExplorerProps {
   onFileSelect?: (path: string) => void;
@@ -119,35 +114,35 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
 
   const getFileIcon = (name: string) => {
     const ext = name.split(".").pop()?.toLowerCase();
-    
+
     switch (ext) {
       case "tsx":
       case "ts":
-        return <DiReact size={16} className="text-blue-500" />;
+        return <DiReact size={16} className="text-gray-600" />;
       case "js":
       case "jsx":
-        return <DiJavascript1 size={16} className="text-yellow-400" />;
+        return <DiJavascript1 size={16} className="text-gray-600" />;
       case "json":
-        return <VscJson size={16} className="text-yellow-600" />;
+        return <VscJson size={16} className="text-gray-600" />;
       case "md":
-        return <VscMarkdown size={16} className="text-blue-400" />;
+        return <VscMarkdown size={16} className="text-gray-600" />;
       case "css":
-        return <DiCss3 size={16} className="text-blue-600" />;
+        return <DiCss3 size={16} className="text-gray-600" />;
       case "html":
-        return <FaHtml5 size={16} className="text-orange-500" />;
+        return <FaHtml5 size={16} className="text-gray-600" />;
       case "svg":
       case "png":
       case "jpg":
       case "jpeg":
       case "gif":
-        return <VscFileMedia size={16} className="text-purple-500" />;
+        return <VscFileMedia size={16} className="text-gray-600" />;
       case "config":
       case "env":
-        return <VscSettings size={16} className="text-gray-500" />;
+        return <VscSettings size={16} className="text-gray-600" />;
       case "mjs":
-        return <VscCode size={16} className="text-green-500" />;
+        return <VscCode size={16} className="text-gray-600" />;
       default:
-        return <VscFile size={16} className="text-gray-500" />;
+        return <VscFile size={16} className="text-gray-600" />;
     }
   };
 
@@ -186,13 +181,15 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
                   <FaChevronRight size={10} />
                 )}
               </span>
-              <span className="mr-2 text-yellow-600">
+              <span className="mr-2 text-gray-600">
                 {isOpen ? <FaFolderOpen size={14} /> : <FaFolder size={14} />}
               </span>
             </>
           )}
           {node.type === "file" && (
-            <span className="mr-2 ml-4 flex items-center">{getFileIcon(node.name)}</span>
+            <span className="mr-2 ml-4 flex items-center">
+              {getFileIcon(node.name)}
+            </span>
           )}
           <span className="py-1 cursor-pointer">{node.name}</span>
         </div>
