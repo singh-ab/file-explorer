@@ -1,6 +1,6 @@
 # File Browser System
 
-A simple Next.js file browsing system with a VS Code-like interface.
+A simple Next.js file browsing system.
 
 ## Features
 
